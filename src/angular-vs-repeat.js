@@ -1,6 +1,6 @@
 //
 // Copyright Kamil Pękala http://github.com/kamilkp
-// Angular Virtual Scroll Repeat v1.1.7 2016/03/08
+// Angular Virtual Scroll Repeat v1.1.8 2017/02/01
 //
 
 (function(window, angular) {
@@ -265,6 +265,12 @@
                             refresh();
                         });
 
+                        function applySafe() {
+                            if ($scope.$root && !$scope.$root.$$phase) {
+                                $scope.$apply();
+                            }
+                        }
+
                         function refresh() {
                             if (!originalCollection || originalCollection.length < 1) {
                                 $scope[collectionName] = [];
@@ -338,9 +344,7 @@
                                         if (gotSomething) {
                                             reinitialize();
                                             autoSize = false;
-                                            if ($scope.$root && !$scope.$root.$$phase) {
-                                                $scope.$apply();
-                                            }
+                                            applySafe();
                                         }
                                     }
                                     else {
@@ -384,12 +388,10 @@
                             if (typeof $attrs.vsAutoresize !== 'undefined') {
                                 autoSize = true;
                                 setAutoSize();
-                                if ($scope.$root && !$scope.$root.$$phase) {
-                                    $scope.$apply();
-                                }
+                                applySafe();
                             }
                             if (updateInnerCollection()) {
-                                $scope.$apply();
+                                applySafe();
                             }
                         }
 
@@ -456,9 +458,7 @@
                             var ch = getClientSize($scrollParent[0], clientSize);
                             if (ch !== _prevClientSize) {
                                 reinitialize();
-                                if ($scope.$root && !$scope.$root.$$phase) {
-                                    $scope.$apply();
-                                }
+                                applySafe();
                             }
                             _prevClientSize = ch;
                         }
